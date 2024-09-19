@@ -1,119 +1,103 @@
 ﻿using System;
 using Cards2;
 
+
 namespace _9_19_lab {
     class Player {
+        // Attributes
         private string name;
-        private List<Card> cardList;
+        private List<Card> hand;
 
-        public void addCard(Card newCard) {
-            cardList.Add(newCard);
+        // Methods
+        public void deal(Card newCard) { hand.Add(newCard); }
+        public Card removeCard(Card cardToRemove) { // To delete, must insert the card index in `hand`
+            Card temp = cardToRemove;
+            hand.Remove(cardToRemove); 
+            return temp;
         }
-        public void printCards() {
-            Console.WriteLine($"{name}:");
-            foreach (Card card in cardList) {
+        public int cardsLeft() { return hand.Count; }
+        public bool isHandEmpty() { return hand.Count == 0; }
+        public void printHand() {
+            Console.WriteLine($"{name}'s hand:");
+            foreach (Card card in hand) {
                 Console.WriteLine($"{card.Rank} of {card.Suit}");
             }
         }
+        public void sortHand() {
+            for (int i = 0; i < hand.Count - 1; i++) {
+                int min = i;
 
+                for (int j = i + 1; j < hand.Count; j++) {
+                    if (hand[min].Rank > hand[j].Rank) {
+                        min = j;
+                    }
+                }
+
+                Card temp = hand[i];
+                hand[i] = hand[min];
+                hand[min] = temp;
+            }
+        }
+
+        // Properties
+        public string Name { set { name = value; } }
+        public List<Card> Hand { get { return hand; } }
+
+        // Constructors
         public Player() {
             name = "John Doe";
-            cardList = new List<Card>();
+            hand = new List<Card>();
         }
         public Player(string n) {
             name = n;
-            cardList = new List<Card>();
+            hand = new List<Card>();
         }
-    }
 
-    class Program {
-        public static void Main(string[] args)
-        {
-            // loop while there's more input
-            string input = Console.ReadLine();
-            while (input != "q") {
-
-                // Add your code between this comment
-                // and the comment below. You can of
-                // course add more space between the
-                // comments as needed
-
-                // declare a deck variables and create a deck object
-                // DON'T SHUFFLE THE DECK
-
-                Deck deck = new Deck();
-                Player p1 = new Player();
-                Player p2 = new Player("Jason");
-                Player p3 = new Player("Lana");
-                Player p4 = new Player("Marva");
-
-                // deal 2 cards each to 4 players (deal properly, dealing
-                // the first card to each player before dealing the
-                // second card to each player)
-
-                Card card1 = deck.TakeTopCard();
-                p1.addCard(card1);
-                
-                Card card2 = deck.TakeTopCard();
-                p2.addCard(card2);
-
-                Card card3 = deck.TakeTopCard();
-                p3.addCard(card3);
-
-                Card card4 = deck.TakeTopCard();
-                p4.addCard(card4);
-
-                Card card5 = deck.TakeTopCard();
-                p1.addCard(card5);
-
-                Card card6 = deck.TakeTopCard();
-                p2.addCard(card6);
-
-                Card card7 = deck.TakeTopCard();
-                p3.addCard(card7);
-
-                Card card8 = deck.TakeTopCard();
-                p4.addCard(card8);
-
-                // deal 1 more card to players 2 and 3
-
-                Card card9 = deck.TakeTopCard();
-                p2.addCard(card9);
-
-                Card card10 = deck.TakeTopCard();
-                p3.addCard(card10);
-
-                // flip all the cards over
-
-                card1.FlipOver();
-                card2.FlipOver();
-                card3.FlipOver();
-                card4.FlipOver();
-                card5.FlipOver();
-                card6.FlipOver();
-                card7.FlipOver();
-                card8.FlipOver();
-                card9.FlipOver();
-                card10.FlipOver();
-
-                // print the cards for player 1
-                p1.printCards();
-
-                // print the cards for player 2
-                p2.printCards();
-
-                // print the cards for player 3
-                p3.printCards();
-
-                // print the cards for player 4
-                p4.printCards();
-
-                // Don't add or modify any code below
-                // this comment */
-                input = Console.ReadLine();
+        // Overrides
+        public override string ToString() {
+            if (hand.Count == 1) {
+                return $"{name} has {hand.Count} card";
+            }
+            else {
+                return $"{name} has {hand.Count} cards";
             }
         }
     }
-}
 
-//input[0] != 'q'
+
+    class Program {
+        // TODO: Insert function to initialize game
+        public static void Main(string[] args) {
+            Deck deck = new Deck();
+            Player player1 = new Player("Jason P");
+
+            player1.deal(deck.TakeTopCard());
+            Console.WriteLine(player1);
+
+            Card temp = player1.removeCard(player1.Hand[0]);
+            Console.WriteLine(player1);
+            Console.WriteLine($"Card taken: {temp.Suit} of {temp.Rank}");
+
+            for (uint i = 0; i < 13; i++) {
+                player1.deal(deck.TakeTopCard());
+            }
+            
+            Console.WriteLine("Before sort");
+            player1.printHand();
+            player1.sortHand();
+            Console.WriteLine("\nAfter sort with one suit");
+            player1.printHand();
+
+            Player player2 = new Player("John");
+            for (uint i = 0; i < 14; i++) { 
+                player2.deal(deck.TakeTopCard());
+            }
+
+            Console.WriteLine("\nBefore sort:\n");
+            player2.printHand();
+            player2.sortHand();
+            Console.WriteLine("\nAfter sort:\n");
+            player2.printHand();
+        }
+    }
+}
