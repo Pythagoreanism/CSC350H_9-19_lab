@@ -9,11 +9,15 @@ namespace _9_19_lab {
         private List<Card> hand;
 
         // Methods
+        /// <summary>
+        /// Deals card from a deck, adds card to player's hand
+        /// </summary>
+        /// <param name="newCard">Card to add to player's hand</param>
         public void deal(Card newCard) { 
             bool duplicate = false;
 
             int i = 0;
-            while (!duplicate && i < hand.Count) {
+            while (!duplicate && i < hand.Count) { // Checks for duplicate
                 if (hand[i].Rank == newCard.Rank && hand[i].Suit == newCard.Suit) {
                     duplicate = true;
                 }
@@ -28,6 +32,12 @@ namespace _9_19_lab {
             }
         }
         // Can't handle case of empty hand (list) without an exception handler due to non-void return type
+        /// <summary>
+        /// Removes card from player's hand
+        /// </summary>
+        /// <param name="cardToRemove">The card to remove, takes in index of card in hand</param>
+        /// <returns>The card that is being removed. Can be assigned to a card to hold it</returns>
+        /// <exception cref="ArgumentOutOfRangeException">Invalid index or list is empty</exception>
         public Card removeCard(Card cardToRemove) { // To delete, must insert the card index in `hand`
             if (hand.Contains(cardToRemove)) {
                 hand.Remove(cardToRemove);
@@ -41,8 +51,19 @@ namespace _9_19_lab {
                 throw new ArgumentOutOfRangeException();
             }
         }
+        /// <summary>
+        /// The number of cards left in the player's hand
+        /// </summary>
+        /// <returns>An integer of cards left</returns>
         public int cardsLeft() { return hand.Count; }
+        /// <summary>
+        /// If the player's hand is empty. No cards left
+        /// </summary>
+        /// <returns>True if hand is empty. False if hand is not empty</returns>
         public bool isHandEmpty() { return hand.Count == 0; }
+        /// <summary>
+        /// Prints the player's name and their cards' rank and suit that's in their hand
+        /// </summary>
         public void printHand() {
             if (hand.Count == 0) {
                 Console.WriteLine($"{name}'s hand is empty");
@@ -54,6 +75,9 @@ namespace _9_19_lab {
                 }
             }
         }
+        /// <summary>
+        /// Sorts the cards in player's hand by rank then suits.
+        /// </summary>
         public void sortHand() {
             for (int i = 0; i < hand.Count - 1; i++) {
                 int min = i;
@@ -75,10 +99,17 @@ namespace _9_19_lab {
         public List<Card> Hand { get { return hand; } }
 
         // Constructors
+        /// <summary>
+        /// Default constructor for Player
+        /// </summary>
         public Player() {
             name = "John Doe";
             hand = new List<Card>();
         }
+        /// <summary>
+        /// Overload constructor for Player
+        /// </summary>
+        /// <param name="n">Name of player</param>
         public Player(string n) {
             name = n;
             hand = new List<Card>();
