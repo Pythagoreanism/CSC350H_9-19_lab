@@ -9,18 +9,49 @@ namespace _9_19_lab {
         private List<Card> hand;
 
         // Methods
-        public void deal(Card newCard) { hand.Add(newCard); }
+        public void deal(Card newCard) { 
+            bool duplicate = false;
+
+            int i = 0;
+            while (!duplicate && i < hand.Count) {
+                if (hand[i].Rank == newCard.Rank && hand[i].Suit == newCard.Suit) {
+                    duplicate = true;
+                }
+                i++;
+            }
+            
+            if (duplicate) {
+                Console.WriteLine("Cannot add the same card to hand!");
+            }
+            else {
+                hand.Add(newCard);
+            }
+        }
+        // Can't handle case of empty hand (list) without an exception handler due to non-void return type
         public Card removeCard(Card cardToRemove) { // To delete, must insert the card index in `hand`
-            Card temp = cardToRemove;
-            hand.Remove(cardToRemove); 
-            return temp;
+            if (hand.Contains(cardToRemove)) {
+                hand.Remove(cardToRemove);
+
+                return cardToRemove;
+            }
+            if (hand.Count == 0) {
+                throw new ArgumentOutOfRangeException();
+            }
+            else {
+                throw new ArgumentOutOfRangeException();
+            }
         }
         public int cardsLeft() { return hand.Count; }
         public bool isHandEmpty() { return hand.Count == 0; }
         public void printHand() {
-            Console.WriteLine($"{name}'s hand:");
-            foreach (Card card in hand) {
-                Console.WriteLine($"{card.Rank} of {card.Suit}");
+            if (hand.Count == 0) {
+                Console.WriteLine($"{name}'s hand is empty");
+            }
+            else {
+                Console.WriteLine($"{name}'s hand:");
+                foreach (Card card in hand) {
+                    Console.WriteLine($"{card.Rank} of {card.Suit}");
+                }
             }
         }
         public void sortHand() {
@@ -69,35 +100,96 @@ namespace _9_19_lab {
         // TODO: Insert function to initialize game
         public static void Main(string[] args) {
             Deck deck = new Deck();
-            Player player1 = new Player("Jason P");
+            
+            // Test Case 1: Initialize
+            Console.WriteLine("TEST CASE 1\n");
+            Player player1 = new Player("Jason");
+            Player player2 = new Player("Lana");
+            Player player3 = new Player("Prof. Tang");
 
+            Console.WriteLine(player1);
+            Console.WriteLine(player2);
+            Console.WriteLine(player3);
+
+            // Test Case 2: Add Card to player
+            Console.WriteLine("\nTEST CASE 2\n");
             player1.deal(deck.TakeTopCard());
             Console.WriteLine(player1);
+            player1.printHand();
 
-            Card temp = player1.removeCard(player1.Hand[0]);
-            Console.WriteLine(player1);
-            Console.WriteLine($"Card taken: {temp.Suit} of {temp.Rank}");
+            // Test Case 3: Remove card from player
+            Console.WriteLine("\nTEST CASE 3\n");
+            Card card = player1.removeCard(player1.Hand[0]);
+            Console.WriteLine($"Card removed: {card.Rank} of {card.Suit}");
+            player1.printHand();
 
-            for (uint i = 0; i < 13; i++) {
-                player1.deal(deck.TakeTopCard());
+            // Test Case 4: Card count
+            Console.WriteLine("\nTEST CASE 4\n");
+            Console.WriteLine($"Count: {player1.cardsLeft()}");
+
+            // Test Case 5: Card location validation
+            Console.WriteLine("\nTEST CASE 5\n");
+            try {
+                Card card2 = player1.removeCard(player1.Hand[50]);
             }
-            
-            Console.WriteLine("Before sort");
-            player1.printHand();
-            player1.sortHand();
-            Console.WriteLine("\nAfter sort with one suit");
-            player1.printHand();
+            catch (ArgumentOutOfRangeException e) {
+                Console.WriteLine(e.Message);
+            }
 
-            Player player2 = new Player("John");
-            for (uint i = 0; i < 14; i++) { 
+            // Test Case 6: Test Empty Hand Deck
+            Console.WriteLine("\nTEST CASE 6\n");
+            try {
+                Card card2 = player1.removeCard(player1.Hand[0]);
+            }
+            catch (ArgumentOutOfRangeException e) {
+                Console.WriteLine(e.Message);
+            }
+
+            // Test Case 7: Display Cards
+            Console.WriteLine("\nTEST CASE 7\n");
+            player1.deal(deck.TakeTopCard());
+            player1.printHand();
+            player2.printHand();
+            player3.printHand();
+
+            // Test Case 8: Sorting by Card Value
+            Console.WriteLine("\nTEST CASE 8\n");
+            for (uint i = 0; i < 5; i++) {
                 player2.deal(deck.TakeTopCard());
             }
+            player2.sortHand(); // For one suit
+            player2.printHand();
 
-            Console.WriteLine("\nBefore sort:\n");
+            for (uint i = 0; i < 14; i++) {
+                player3.deal(deck.TakeTopCard());
+            }
+            player3.sortHand(); // For two suits
+            player3.printHand();
+
+            // Test Case 9: Multiple deals
+            Console.WriteLine("\nTEST CASE 9\n");
+            for (uint i = 0; i < 6; i++) {
+                player1.deal(deck.TakeTopCard());
+                player2.deal(deck.TakeTopCard());
+                player3.deal(deck.TakeTopCard());
+            }
+            player1.printHand();
             player2.printHand();
-            player2.sortHand();
-            Console.WriteLine("\nAfter sort:\n");
-            player2.printHand();
+            player3.printHand();
+
+            // Test Case 10: Duplicate cards
+            Console.WriteLine("\nTEST CASE 10\n");
+            Player player4 = new Player();
+            Deck deck2 = new Deck();
+            Deck deck3 = new Deck();
+            player4.deal(deck2.TakeTopCard()); // Takes King of Spades
+            player4.deal(deck3.TakeTopCard()); // Takes King of Spades
+            player4.printHand();
+
+            // Test Case 11: Remove non-existent card
+            Console.WriteLine("\nTEST CASE 11\n");
+            Console.WriteLine("Refer to Test Case 5");
+
         }
     }
 }
